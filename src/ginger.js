@@ -8,6 +8,14 @@
 // endpoint, a bearer key and a model id, so a role can point at Groq, OpenRouter, or any
 // other OpenAI-compatible host purely through env vars -- no code change to swap models.
 // Not configured means the endpoint returns 501, same pattern as chatbot.js.
+//
+// Multi-business: one deployment can serve several businesses. A request naming a
+// `businessId` is looked up in the ginger_businesses table (see db.js/schema.sql) for
+// its own system prompt, facts, and optional per-role provider/model overrides; a
+// request with no businessId (or one D1 doesn't know) just uses the global env config,
+// so the single-business setup from before this change keeps working unchanged.
+
+import * as db from './db.js';
 
 const PROVIDER_ENDPOINTS = {
   groq: 'https://api.groq.com/openai/v1/chat/completions',
@@ -34,11 +42,16 @@ function classifyTask(message) {
 
 // Roles read from GINGER_<ROLE>_PROVIDER / _MODEL / _KEY, falling back to GROQ_API_KEY
 // so the existing chatbot's key covers Ginger too when a role has no key of its own.
-function roleConfig(env, role) {
+// A business row's own <role>_provider/<role>_model columns take priority when set --
+// the key always comes from env, never from the database, since keys are secrets and
+// businesses only override which model they're spent on.
+function roleConfig(env, role, business) {
   const upper = role.toUpperCase();
+  const bizProvider = business?.[`${role}_provider`];
+  const bizModel = business?.[`${role}_model`];
   return {
-    provider: env[`GINGER_${upper}_PROVIDER`] || 'groq',
-    model: env[`GINGER_${upper}_MODEL`],
+    provider: bizProvider || env[`GINGER_${upper}_PROVIDER`] || 'groq',
+    model: bizModel || env[`GINGER_${upper}_MODEL`],
     key: env[`GINGER_${upper}_KEY`] || env.GROQ_API_KEY,
   };
 }
@@ -68,7 +81,10 @@ async function callRole(config, messages) {
   return reply;
 }
 
-function systemPrompt(env) {
+function systemPrompt(env, business) {
+  if (business) {
+    return business.facts ? `${business.system_prompt}\n\n${business.facts}` : business.system_prompt;
+  }
   return (
     env.GINGER_SYSTEM_PROMPT ||
     'You are Mufasa, the assistant persona of the Ginger system. Answer clearly and concisely.'
@@ -76,19 +92,25 @@ function systemPrompt(env) {
 }
 
 export async function handleGinger(request, env) {
-  const main = roleConfig(env, 'main');
-  if (!isConfigured(main)) {
-    return new Response(JSON.stringify({ error: 'Ginger is not set up yet.' }), {
-      status: 501,
-      headers: { 'content-type': 'application/json' },
-    });
-  }
-
   let body;
   try {
     body = await request.json();
   } catch {
     return new Response(JSON.stringify({ error: 'Bad request.' }), { status: 400 });
+  }
+
+  const businessId = typeof body?.businessId === 'string' ? body.businessId.trim().slice(0, 100) : '';
+  const business = businessId && env.DB ? await db.getGingerBusiness(env.DB, businessId) : null;
+  if (businessId && !business) {
+    return new Response(JSON.stringify({ error: `Unknown businessId: ${businessId}` }), { status: 404 });
+  }
+
+  const main = roleConfig(env, 'main', business);
+  if (!isConfigured(main)) {
+    return new Response(JSON.stringify({ error: 'Ginger is not set up yet.' }), {
+      status: 501,
+      headers: { 'content-type': 'application/json' },
+    });
   }
 
   const message = String(body?.message || '').trim().slice(0, 4000);
@@ -102,7 +124,7 @@ export async function handleGinger(request, env) {
     : [];
 
   const messages = [
-    { role: 'system', content: systemPrompt(env) },
+    { role: 'system', content: systemPrompt(env, business) },
     ...history,
     { role: 'user', content: message },
   ];
@@ -111,7 +133,7 @@ export async function handleGinger(request, env) {
   const requestedTask = typeof body?.task === 'string' ? body.task : null;
   const task = requestedTask && requestedTask !== 'main' ? requestedTask : classifyTask(message);
 
-  let config = task === 'main' ? main : roleConfig(env, task);
+  let config = task === 'main' ? main : roleConfig(env, task, business);
   let usedRole = task;
   if (task !== 'main' && !isConfigured(config)) {
     // Supporting role not configured -- fall back to main rather than failing the request.

@@ -305,3 +305,10 @@ export async function listSourcingRequests(db, limit = 50) {
     .all();
   return results || [];
 }
+
+export async function getGingerBusiness(db, businessKey) {
+  return db
+    .prepare('SELECT * FROM ginger_businesses WHERE business_key = ? AND active = 1')
+    .bind(businessKey)
+    .first();
+}

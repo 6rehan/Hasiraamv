@@ -347,3 +347,26 @@ CREATE TABLE coupons (
   created_at      TEXT NOT NULL DEFAULT (datetime('now'))
 );
 CREATE INDEX idx_coupons_code ON coupons(code);
+
+-- Ginger --------------------------------------------------------------------------
+-- Lets one Ginger deployment serve multiple businesses: each row is one business's
+-- config, looked up by business_key (sent as businessId in the /api/ginger request
+-- body). system_prompt and facts together make up what the system prompt in ginger.js
+-- sends the model -- facts is free text, e.g. pricing/policy/product facts specific to
+-- that business, kept separate from system_prompt so it can be edited on its own.
+-- main_model / reasoning_model override the global GINGER_*_MODEL env vars for this
+-- business only; NULL means "use the env var default".
+CREATE TABLE ginger_businesses (
+  id               INTEGER PRIMARY KEY AUTOINCREMENT,
+  business_key     TEXT NOT NULL UNIQUE,
+  name             TEXT NOT NULL,
+  system_prompt    TEXT NOT NULL,
+  facts            TEXT,
+  main_provider    TEXT,
+  main_model       TEXT,
+  reasoning_provider TEXT,
+  reasoning_model  TEXT,
+  active           INTEGER NOT NULL DEFAULT 1,
+  created_at       TEXT NOT NULL DEFAULT (datetime('now')),
+  updated_at       TEXT NOT NULL DEFAULT (datetime('now'))
+);
