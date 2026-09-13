@@ -100,6 +100,20 @@ RESEND_FROM = "Rarehaus <welcome@rarehaus.in>"
 # leaving it unset just means no chat widget, nothing breaks.
 GROQ_MODEL = "llama-3.3-70b-versatile"
 
+# Ginger: a second, task-routed assistant at POST /api/ginger, independent of the help
+# chat above. General messages go to the "main" role, code/reasoning-shaped messages go
+# to the "reasoning" role; if a role has no model/key configured (or its call fails), the
+# request falls back to "main". Each role is provider-agnostic (Groq or OpenRouter today,
+# see PROVIDER_ENDPOINTS in ginger.js) purely via env vars, so swapping the underlying
+# model never needs a code change. Verify exact model ids against the provider's current
+# lineup (console.groq.com/docs/models or openrouter.ai/models) before setting these --
+# they change often. Leaving GINGER_MAIN_MODEL unset means /api/ginger returns 501.
+# GINGER_MAIN_PROVIDER = "groq"                    # or "openrouter"
+# GINGER_MAIN_MODEL = "qwen/qwen3-32b"              # the "Mufasa" default persona model
+# GINGER_REASONING_PROVIDER = "groq"                # or "openrouter"
+# GINGER_REASONING_MODEL = "deepseek-r1-distill-llama-70b"
+GINGER_SYSTEM_PROMPT = "You are Mufasa, the assistant persona of the Ginger system. Answer clearly and concisely."
+
 # Secrets (set with `wrangler secret put <NAME>`, never commit them):
 #   SESSION_SECRET        random string used to sign admin and cart cookies. Admin login is
 #                         now per-employee (the admin_users table, see db/schema.sql and
@@ -111,3 +125,7 @@ GROQ_MODEL = "llama-3.3-70b-versatile"
 #                         /webhooks/clerk (subscribe it to the user.created event)
 #   RESEND_API_KEY        from your Resend account, used to send the welcome email
 #   GROQ_API_KEY          from console.groq.com -- turns the help chat bubble on
+#   GINGER_MAIN_KEY       key for the Ginger "main" role's provider; if unset, falls back
+#                         to GROQ_API_KEY above
+#   GINGER_REASONING_KEY  key for the Ginger "reasoning" role's provider; if unset, falls
+#                         back to GROQ_API_KEY above

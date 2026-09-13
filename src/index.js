@@ -25,6 +25,7 @@ import { findCoupon, evaluateCoupon } from './coupons.js';
 import { getClerkAuth, getClerkUserProfile, verifyClerkWebhook, clerkConfigured } from './clerk.js';
 import { sendWelcomeEmail } from './email.js';
 import { handleChat } from './chatbot.js';
+import { handleGinger } from './ginger.js';
 import { signInPage, signUpPage, accountPage, clerkNotConfiguredPage } from './views/account.js';
 
 export default {
@@ -88,6 +89,7 @@ async function route(request, env, ctx) {
 
   if (path === '/webhooks/clerk' && method === 'POST') return clerkWebhook(request, env, ctx);
   if (path === '/chat' && method === 'POST') return handleChat(request, env);
+  if (path === '/api/ginger' && method === 'POST') return handleGinger(request, env);
 
   if (path.startsWith('/admin')) {
     return adminRouter(request, env, path);
