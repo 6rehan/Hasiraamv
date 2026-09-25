@@ -1,0 +1,33 @@
+<title>Late Night Scroll</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@1,9..144,500&family=DM+Sans:wght@400;600&display=swap">
+<style>
+:root{--bg:#eef0f7;--card:#ffffff;--ink:#1c1f33;--mute:#5d6283;--acc:#6b4fd8;--line:#d9dcea}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1020;--card:#171a30;--ink:#e8e9f5;--mute:#9a9ec0;--acc:#a996ff;--line:#2a2e4c;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0e1020;--card:#171a30;--ink:#e8e9f5;--mute:#9a9ec0;--acc:#a996ff;--line:#2a2e4c;color-scheme:dark}
+body{background:var(--bg);color:var(--ink);font:16px/1.6 "DM Sans",system-ui,sans-serif;padding:32px 16px}
+main{max-width:640px;margin:0 auto;display:grid;gap:24px}
+h1{font:italic 500 clamp(2.2rem,8vw,3.4rem)/1.05 Fraunces,Georgia,serif;margin:0;text-wrap:balance}
+.meta{color:var(--mute);font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;margin:0}
+.track{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;display:grid;gap:8px}
+.track h2{font-size:1rem;margin:0}.track p{margin:0;color:var(--mute);font-size:.9rem}
+audio{width:100%}
+.lyrics h3{font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;color:var(--acc);margin:20px 0 4px}
+.lyrics p{margin:0;max-width:60ch}
+</style>
+<main>
+  <header>
+    <p class="meta">Original · 92 BPM · F minor · Fm–Db–Ab–Eb</p>
+    <h1>Late Night Scroll</h1>
+  </header>
+  <section class="track"><h2>Full song</h2><p>Arrangement with the "choir aahs" melody guide showing how to sing the hook.</p><audio controls preload="metadata" src="late_night_scroll.mp3"></audio></section>
+  <section class="track"><h2>Instrumental</h2><p>A simpler beat with no melody guide, to rap or sing over.</p><audio controls preload="metadata" src="late_night_scroll_beat.mp3"></audio></section>
+  <section class="lyrics">
+    <h3>Verse 1 · rap</h3>
+    <p>2 a.m., blue light on my face,<br>thumbin' through a life that I can't replace,<br>filtered little heartbreak, pastel skies,<br>everybody's smilin' but I see it in their eyes.<br>You post the sunset, I'm the one who's awake,<br>double-tap love, it's the realest thing fake,<br>city on mute and the rain on the pane,<br>I keep scrollin' back to you like I'm lookin' for pain.</p>
+    <h3>Hook · sung</h3>
+    <p>Oh, you're a picture I can't hold,<br>glowin' warm but you feel so cold,<br>late night scroll, I'm losin' control,<br>tell me why I still want you though.</p>
+    <h3>Verse 2 · rap</h3>
+    <p>Black and white photos, lyrics in your bio,<br>you quote the songs that I wrote in my studio,<br>different time zones but the same lonely vibe,<br>two strangers in love with a feed, not a life.</p>
+    <h3>Hook · repeat</h3>
+  </section>
+</main>
