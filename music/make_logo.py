@@ -9,8 +9,8 @@ def glow(base,layer,r,amt):
 def icon(d,cx,cy,s):
     L=int(18*s)
     d.ellipse([cx-300*s,cy-260*s,cx+300*s,cy+360*s],outline=W,width=L)                 # helmet
-    d.arc([cx-340*s,cy-470*s,cx+360*s,cy+60*s],185,345,fill=W,width=L)                  # pompadour sweep
-    d.line([(cx+300*s,cy-330*s),(cx+470*s,cy-420*s),(cx+310*s,cy-190*s)],fill=W,width=L,joint='curve')
+    d.arc([cx-320*s,cy-340*s,cx+330*s,cy+240*s],190,335,fill=W,width=L)                  # pompadour sweep
+    d.line([(cx+260*s,cy-230*s),(cx+440*s,cy-330*s),(cx+300*s,cy-120*s)],fill=W,width=L,joint='curve')
     d.polygon([(cx-80*s,cy+150*s),(cx+80*s,cy+150*s),(cx,cy+330*s)],outline=W,width=L)   # beak
 def visor(d,cx,cy,s): d.rounded_rectangle([cx-230*s,cy+10*s,cx+230*s,cy+70*s],radius=int(30*s),fill=CY)
 def wordmark(img,cx,cy,spacing):
@@ -26,7 +26,7 @@ def render(w,h,layout,name):
         icon(d,w//2,760,1.25); visor(d,w//2,760,1.25); visor(gd,w//2,760,1.25); wordmark(img,w//2,1640,70)
         gd.line([(w//2-700,1640),(w//2+700,1640)],fill=CY,width=6)
     elif layout=='wide':
-        icon(d,520,h//2-40,1.0); visor(d,520,h//2-40,1.0); visor(gd,520,h//2-40,1.0); wordmark(img,1900,h//2,60)
+        icon(d,520,h//2-30,.95); visor(d,520,h//2-30,.95); visor(gd,520,h//2-30,.95); wordmark(img,1900,h//2,60)
         gd.line([(1200,h//2),(2600,h//2)],fill=CY,width=6)
     else:
         icon(d,w//2,w//2-60,1.9); visor(d,w//2,w//2-60,1.9); visor(gd,w//2,w//2-60,1.9)
