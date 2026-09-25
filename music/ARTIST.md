@@ -1,9 +1,9 @@
-# CROWE
+# Rilo Solo
 
 **Look:** masked artist in the style of deadmau5 and Marshmello. Nobody sees his face.
 **Mascot/helmet:** a white crow head with a slicked-back black pompadour, glowing ice-blue slit eyes,
 a black beak, and a leather-jacket collar. It's all black and white, a 1950s greaser rebel style with a noir mood.
-**Why "Crowe":** crows come out at night, they're clever, and they're always dressed in black.
+**Mascot:** crows come out at night, they're clever, and they're always dressed in black.
 **Sound:** smooth West Coast hip-hop, doo-wop and vintage soul samples, late-night heartbreak.
 
 ## Songs
